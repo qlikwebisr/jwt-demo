@@ -1,0 +1,12 @@
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test/
+.vscode/
+
+# node libraries
+node_modules/
+
+# json data
+files/jwt.json
+
+# settings file
+.env
