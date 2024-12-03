@@ -17,7 +17,8 @@ const model = {
         return "test";
     },
 
-    //get access token for API requests
+    //get tenant tedails, incl. ID
+    //https://qlik.dev/apis/rest/tenants/#get-v1-tenants-me
     getTenantId: async (tenant_domain, access_token) => {
 
         return new Promise(async (resolve, reject) => {
@@ -57,8 +58,59 @@ const model = {
         });
 
     },
+    
+    //https://qlik.dev/apis/rest/web-integrations/#post-v1-web-integrations
+    /**
+     * Create web Integration
+     * @param {*} tenant_domain 
+     * @param {*} web_integration_name - name of the web integration
+     * @param {*} origins - array of the origins ["https://example.com","https://localhost:3000"] 
+     * @returns 
+     */
+    createWebIntegration: async (tenant_domain, web_integration_name, origins) => {
+        return new Promise(async (resolve, reject) => {
 
-    //add CSP rule for the host
+            const url = `https://${tenant_domain}/api/v1/web-integrations`;
+
+            const body = {
+                name: web_integration_name,
+                validOrigins: origins
+            };
+
+            const options = {
+                method: "POST", 
+                headers: {
+                  "Content-Type": "application/json",
+                  "Accept": "application/json",
+                  'Authorization': 'Bearer ' + access_token
+                },
+                body: JSON.stringify(body)
+              };
+
+              await fetch(url, options)
+              .then((response) => {
+                
+                if (!response.ok) {
+                  throw new Error(
+                    `HTTP error! Status: ${response.status}, Status text: ${response.statusText}`
+                  );
+                }
+                return response.json();
+
+                }).catch((err) => {
+                    console.log('createWebIntegration error:', err);
+                    reject(err)
+                })
+                .then((webIntData) => {
+                    resolve(webIntData);
+                });
+      
+
+        });
+    },
+
+    //CSP ORIGINS - create new CSP rule for origins
+    //https://qlik.dev/apis/rest/csp-origins/#post-v1-csp-origins
     addCSPrule: async (tenant_domain, host, access_token) => {
 
         return new Promise(async (resolve, reject) => {
@@ -108,7 +160,8 @@ const model = {
 
 
 
-    //get access token for API requests
+    //Retrieve OAuth token for API requests
+    //https://qlik.dev/apis/rest/oauth/#post-oauth-token
     get_access_token: async (tenant_domain) => {
 
         return new Promise(async (resolve, reject) => {

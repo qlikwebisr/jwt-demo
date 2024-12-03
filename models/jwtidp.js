@@ -48,6 +48,11 @@ const jwtidp = {
       //const host = "localhost:3000";
       //const csp = await model.addCSPrule(tenant_domain, host, access_token);
 
+      //create Web Integration
+      //const web_integration_name = "web_integration_jwt";
+      //const web_origins = ["https://localhost:3000", "http://localhost:3000"];
+      //await model.createWebIntegration(tenant_domain, web_integration_name, origins) 
+
       //set parameters for JWT IDP: keyID, issuer, publicKeyForIdp, privateKey
       const keyID = `${tenant_domain}_${Math.floor(Math.random() * 1000)}_kid`;
 
