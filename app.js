@@ -42,10 +42,13 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname + "/index.html"));
 });
 
-app.get("/test", (req, res) => {
+app.get("/test", async (req, res) => {
   //token.generate();
-  //model.getUserSubject(process.env.TENANT, process.env.USER_EMAIL);
-  res.send("Hello World!");
+  // const user_sub = await model.getUserSubject(process.env.TENANT, "agranov.paka@gmail.com");
+  // console.log("user_sub", user_sub);
+  // res.json({user_sub: user_sub});
+
+  res.json({test: "test"});
 });
 
 //return config data

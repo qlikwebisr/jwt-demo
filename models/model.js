@@ -246,8 +246,25 @@ const model = {
                 reject(err)
             })
             .then((user_data) => {
-                console.log('user_subject', user_data.data[0].subject);
-                resolve(user_data.data[0].subject);
+
+                console.log('user_subject', user_data);
+
+                console.log('user_data.data.length', user_data.data.length);
+                
+
+                if (user_data.data.length === 0) {
+
+                  const randomString = Math.random().toString(36).substring(2, 15);
+                  const new_subject = `${user_email}_${randomString}`;
+
+                  console.log('new_subject', new_subject);
+                  
+                  resolve(new_subject);
+
+                } else {
+
+                    resolve(user_data.data[0].subject);
+                }
             });
   
         });
