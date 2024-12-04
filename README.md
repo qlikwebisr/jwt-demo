@@ -6,7 +6,24 @@ Based on Node.js
 - Generates JWT token and opens qlik sense application in iframe
 
 ## Settings
-In .env file
+In the .env file
+
+```
+# OAUTH2 DATA
+CLIENT_ID=<oauth client id>
+CLIENT_SECRET=<oauth client secret>
+# TENANT DATA
+TENANT=<domain>.<region>.qlikcloud.com
+WEBID=Hq...aj
+# APP DATA
+APPID=9d....e248
+SHEETID=497....49
+# USER DATA
+USER_NAME=<user name>
+USER_EMAIL=<user email>
+# PORT
+PORT=3000
+```
 
 ### Installation and activation
 ```

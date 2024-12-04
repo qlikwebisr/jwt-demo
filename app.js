@@ -4,7 +4,7 @@ import cors from "cors";
 import fs from "fs/promises";
 import path from "path";
 import bodyParser from "body-parser";
-import fetch from "node-fetch";
+import https from "https";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 
@@ -14,8 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const port = process.env.PORT || 3000;
-//const CLIENT_SECRET = process.env.CLIENT_SECRET;
-//const CLIENT_ID = process.env.CLIENT_ID;
+
 const tenant = process.env.TENANT;
 
 console.log(port, tenant);
@@ -33,32 +32,89 @@ app.use(bodyParser.json());
 //files
 import model from "./models/model.js";
 import jwtidp from "./models/jwtidp.js";
+import token from "./models/token.js";
 
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, "public")));
 
 //routes
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname + "/index.html"));
+  res.sendFile(path.join(__dirname + "/index.html"));
+});
+
+app.get("/test", (req, res) => {
+  //token.generate();
+  //model.getUserSubject(process.env.TENANT, process.env.USER_EMAIL);
+  res.send("Hello World!");
+});
+
+//return config data
+app.get("/config", (req, res) => {
+
+  //tenantDomain, qlikWebIntegrationId, appId, objId, currentLoginType, loginTypes
+
+  const loginTypes = {
+    INTERACTIVE_LOGIN: 'interactive-login',
+    JWT_LOGIN: 'jwt-login'
+  }
+
+  const config = {
+    tenantDomain: tenant,
+    qlikWebIntegrationId: process.env.WEBID,
+    appId: process.env.APPID,
+    sheetId: process.env.SHEETID,
+    currentLoginType: loginTypes.JWT_LOGIN,
+    loginTypes,currentLoginType: loginTypes.JWT_LOGIN,   
+  };
+
+  res.json(config);
+
 });
 
 app.get("/jwt", async (req, res) => {
-
-    //create JWT IDP
-    const jwt_response = await jwtidp.createJwtIdp(tenant);
-
-    //write to JSON
-    //const jsn = { jwt: `Bearer test test` };
-    //await model.writeToJson(jsn, "../files/jwt.json"); 
-
-    //read fro JSON
-    //const jwt =  await model.readFromJson("../files/jwt.json");   
-    //console.log(jwt.jwt);
-    
-    res.json(jwt_response);
+  //create JWT IDP
+  const jwt_response = await jwtidp.createJwtIdp(tenant);
+  res.json(jwt_response);
 });
 
-//server 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
- });
+app.get("/token", async (req, res) => {
+
+  const gen_token =  await token.generate();
+  console.log("token", gen_token);
+
+  res.json({ token: gen_token });
+});
+
+//iframe page
+app.get("/iframe", (req, res) => {
+    
+    res.sendFile(path.join(__dirname + "/public/iframe.html"));
+});
+
+//server http
+//app.listen(port, () => {
+//   console.log(`Example app listening on port ${port}`);
+//});
+
+(async () => {
+  try {
+    const key = await fs.readFile("./certs/server.key");
+    const cert = await fs.readFile("./certs/server.crt");
+
+    https
+      .createServer(
+        {
+          key: key,
+          cert: cert,
+        },
+        app
+      )
+      .listen(port, "localhost", function () {
+        console.log(
+          `Https Server listening on port 3000! Go to https://localhost:${port}`
+        );
+      });
+  } catch (err) {
+    console.error("Error reading certificate files:", err);
+  }
+})();

@@ -129,7 +129,7 @@ const model = {
                 headers: {
                   "Content-Type": "application/json",
                   "Accept": "application/json",
-                  'Authorization': 'Bearer ' + access_token
+                  "Authorization": "Bearer " + access_token
                 },
                 body: JSON.stringify(body)
               };
@@ -162,7 +162,7 @@ const model = {
 
     //Retrieve OAuth token for API requests
     //https://qlik.dev/apis/rest/oauth/#post-oauth-token
-    get_access_token: async (tenant_domain) => {
+    getAccessToken: async (tenant_domain) => {
 
         return new Promise(async (resolve, reject) => {
 
@@ -207,6 +207,50 @@ const model = {
       
         });
 
+    },
+
+    //Get user subject
+    //https://qlik.dev/apis/rest/users/#post-v1-users-actions-filter
+    getUserSubject: (tenant_domain, user_email) => {
+
+        return new Promise(async (resolve, reject) => {
+
+        const url = `https://${tenant_domain}/api/v1/users/actions/filter`;
+
+        const access_token = await model.getAccessToken(tenant_domain);
+
+        const body = {"filter":"email eq \"" + user_email + "\""};
+    
+        const options = {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json",
+              "Authorization": "Bearer " + access_token
+            },
+            body: JSON.stringify(body)       
+        };
+
+          await fetch(url, options)
+          .then((response) => {
+
+            if (!response.ok) {
+              throw new Error(
+                `HTTP error! Status: ${response.status}, Status text: ${response.statusText}`
+              );
+            }
+            return response.json();
+
+            }).catch((err) => {
+                console.log('fetch access token error:', err);
+                reject(err)
+            })
+            .then((user_data) => {
+                console.log('user_subject', user_data.data[0].subject);
+                resolve(user_data.data[0].subject);
+            });
+  
+        });
     },
 
 

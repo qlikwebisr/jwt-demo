@@ -1,74 +1,57 @@
 //file to generate a jwt token
 import jsonWebToken from "jsonwebtoken";
-import fs from "fs";
-import config from "../config/config";
 import { v4 as uuidv4 } from "uuid";
+import dotenv from "dotenv";
 
+dotenv.config();
 
-//const privateKey = fs.readFileSync("./data/privatekey_fox.pem", "utf8");
-//const publicKey = fs.readFileSync("./data/publickey_new.pem", "utf8");
+//files
+import model from "./model.js";
 
- //console.log('privateKey', privateKey);
-// console.log("==================================================");
-// console.log('publicKey', publicKey);
+//get jwt parameters from jwt.json
+const jwt = await model.readFromJson("../files/jwt.json");
+//console.log('jwt', jwt);
 
-// const privateKey64 = Buffer.from(privateKey, "utf8").toString("base64");
-// const publicKey64 = Buffer.from(publicKey, "utf8").toString("base64");
+//get private key from jwt.json - key in base64
+const privateKey64 = jwt.privateKey;
 
-
-const privateKey64 = config.privateKey64;
-// console.log('privateKey64', privateKey64);
-// console.log("==================================================");
-// console.log('publicKey64', publicKey64);
 //64bit key
 const convertedPrivateKey = Buffer.from(privateKey64, "base64").toString("utf8");
-
 //console.log('convertedPrivateKey', convertedPrivateKey);
 
-const methods = {
+const token = {
 
-    generate: async function (sub, name, email, groups = []) {
+    generate: async function () {
 
-        console.log('generate', sub, name, email, config.keyid, config.issuer);
+        const subject = await model.getUserSubject(process.env.TENANT, process.env.USER_EMAIL);
+        //const subject = "auth0|a08D00000191QfBIAU";
 
         const signingOptions = {
-            "keyid": config.keyid,
+            "keyid": jwt.keyID,
             "algorithm": "RS256",
-            "issuer": config.issuer,
+            "issuer": jwt.issuer,
             "expiresIn": "30s",
             "notBefore": "-30s",
             "audience": "qlik.api/login/jwt-session"
         };
 
-        // let key = `-----BEGIN PRIVATE KEY-----
-        // MIIEvgIBADANBgkqhkiG......ywYZUYfle
-        // xEHReKWitvoKDDPp8l0jpPsw
-        // -----END PRIVATE KEY-----`;
-
-       // const key = privateKey.replace("/\n/g", "\n");
-
-        //console.log('key', key);
-
         const payload = {
             jti: uuidv4().toString(),
-            sub: sub,
+            sub: subject,
             subType: "user",
-            name: name,
-            email: email,
+            name: process.env.USER_NAME,
+            email: process.env.USER_EMAIL,
             email_verified: true,
-            groups: groups
+            groups: [],
         };
 
-        //from file
-       // const token = jsonWebToken.sign(payload, privateKey, signingOptions);
-        
         //from base64
         const token = jsonWebToken.sign(payload, convertedPrivateKey, signingOptions);
-        //console.log('token', token);
+        console.log('token', token);
 
         return token;
     }
 };
 
 
-module.exports = methods;
+export default token;

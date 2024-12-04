@@ -42,7 +42,7 @@ const jwtidp = {
     return new Promise(async (resolve, reject) => {
 
       //get ACCESS_TOKEN
-      const access_token = await model.get_access_token(tenant_domain);
+      const access_token = await model.getAccessToken(tenant_domain);
 
       //create CSP rule
       //const host = "localhost:3000";

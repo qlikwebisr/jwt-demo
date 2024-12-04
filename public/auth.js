@@ -4,8 +4,8 @@ export const auth = async () => {
     // const loginLink = shouldLoginBox.querySelector('a')
     
     // 1) get config
-    const { tenantDomain, qlikWebIntegrationId, appId, objId, currentLoginType, loginTypes } = await fetch("config").then((resp) => resp.json());
-    const config = { tenantDomain, qlikWebIntegrationId, appId, objId, currentLoginType, loginTypes };
+    const { tenantDomain, qlikWebIntegrationId, appId, sheetId, currentLoginType, loginTypes } = await fetch("config").then((resp) => resp.json());
+    const config = { tenantDomain, qlikWebIntegrationId, appId, sheetId, currentLoginType, loginTypes };
     
     // 2) get logged in
     if(currentLoginType === loginTypes.JWT_LOGIN) await handleAutomaticLogin()
