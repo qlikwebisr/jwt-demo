@@ -83,7 +83,7 @@ app.get("/jwt", async (req, res) => {
 app.get("/token", async (req, res) => {
 
   const gen_token =  await token.generate();
-  console.log("token", gen_token);
+  //console.log("token", gen_token);
 
   res.json({ token: gen_token });
 });

@@ -11,12 +11,6 @@ const __dirname = path.dirname(__filename);
 //main model object for secondary functions
 const model = {
 
-    test: () => {
-
-        console.log("test");
-        return "test";
-    },
-
     //get tenant tedails, incl. ID
     //https://qlik.dev/apis/rest/tenants/#get-v1-tenants-me
     getTenantId: async (tenant_domain, access_token) => {
@@ -200,7 +194,8 @@ const model = {
                     reject(err)
                 })
                 .then((json) => {
-                    console.log('access token', json);
+
+                    //console.log('access token', json);
                     
                     resolve(json.access_token);
                 });
@@ -247,10 +242,8 @@ const model = {
             })
             .then((user_data) => {
 
-                console.log('user_subject', user_data);
-
-                console.log('user_data.data.length', user_data.data.length);
-                
+                //console.log('user_subject', user_data);
+                //console.log('user_data.data.length', user_data.data.length);
 
                 if (user_data.data.length === 0) {
 
