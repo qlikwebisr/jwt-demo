@@ -42,14 +42,6 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname + "/index.html"));
 });
 
-app.get("/test", async (req, res) => {
-  //token.generate();
-  // const user_sub = await model.getUserSubject(process.env.TENANT, "agranov.paka@gmail.com");
-  // console.log("user_sub", user_sub);
-  // res.json({user_sub: user_sub});
-
-  res.json({test: "test"});
-});
 
 //return config data
 app.get("/config", (req, res) => {
@@ -74,23 +66,34 @@ app.get("/config", (req, res) => {
 
 });
 
+//test functions
+app.get("/test", async (req, res) => {
+
+  const access_token = await model.getAccessToken(tenant);
+  //const spaces = await model.addAssigmentToSpace(tenant, access_token);
+
+  const tenant_id = await model.getTenantId(tenant, access_token);
+  const status = await model.removeAutoAssignProperties(tenant, tenant_id, access_token) 
+  res.json(status);
+});
+
+//create JWT IDP
 app.get("/jwt", async (req, res) => {
   //create JWT IDP
   const jwt_response = await jwtidp.createJwtIdp(tenant);
   res.json(jwt_response);
 });
 
+//create token for iframe
 app.get("/token", async (req, res) => {
-
   const gen_token =  await token.generate();
   //console.log("token", gen_token);
-
   res.json({ token: gen_token });
 });
 
 //iframe page
 app.get("/iframe", (req, res) => {
-    
+  
     res.sendFile(path.join(__dirname + "/public/iframe.html"));
 });
 
