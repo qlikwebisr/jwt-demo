@@ -296,25 +296,18 @@ const model = {
   },
 
   //Remove auto assign properties for the users
-  removeAutoAssignProperties: (tenant_domain, tenant_id, access_token) => {
+  removeAutoAssignProperties: (tenant_domain, access_token) => {
     return new Promise(async (resolve, reject) => {
-      //add assignment everyone to space
+      /* 
+       "name": "ManagedSpaceCreator",
+        "name": "PrivateAnalyticsContentCreator"
+      */
       const body = [
         {
           op: "replace",
-          path: "/autoAssignCreateSharedSpacesRoleToProfessionals",
-          value: false
+          path: "/assignedRoles",
+          value: [],
         },
-        {
-          op: "replace",
-          path: "/autoAssignPrivateAnalyticsContentCreatorRoleToProfessionals",
-          value: false
-        },
-        {
-          op: "replace",
-          path: "/autoAssignDataServicesContributorRoleToProfessionals",
-          value: false
-        }
       ];
 
       const options = {
@@ -327,7 +320,7 @@ const model = {
       };
 
       await fetch(
-        `https://${tenant_domain}/api/v1/tenants/${tenant_id}`,
+        `https://${tenant_domain}/api/v1/groups/000000000000000000000001`,
         options
       )
         .then((response) => {
@@ -337,7 +330,6 @@ const model = {
             );
           }
           console.log("response.status", response.status);
-          
           resolve(response.status);
         })
         .catch((err) => {
