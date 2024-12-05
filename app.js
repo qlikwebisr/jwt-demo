@@ -71,9 +71,7 @@ app.get("/test", async (req, res) => {
 
   const access_token = await model.getAccessToken(tenant);
   //const spaces = await model.addAssigmentToSpace(tenant, access_token);
-
-  const tenant_id = await model.getTenantId(tenant, access_token);
-  const status = await model.removeAutoAssignProperties(tenant, tenant_id, access_token) 
+  const status = await model.removeAutoAssignProperties(tenant, access_token);
   res.json(status);
 });
 

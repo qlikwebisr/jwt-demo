@@ -239,7 +239,7 @@ const model = {
   },
 
   /**
-   * Add view role to Everyone grope in space
+   * Add restricted view role to Everyone group 
    * https://qlik.dev/apis/rest/spaces/##/entries/v1/spaces/-spaceId/assignments-post
    * @returns
    */

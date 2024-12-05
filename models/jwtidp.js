@@ -48,6 +48,12 @@ const jwtidp = {
       //const host = "localhost:3000";
       //const csp = await model.addCSPrule(tenant_domain, host, access_token);
 
+      //Add restricted view role to Everyone group 
+      //await model.addAssigmentToSpace(tenant_domain, access_token);
+
+      //add auto assignments to everyone group
+      //await model.removeAutoAssignProperties(tenant, access_token);
+
       //create Web Integration
       //const web_integration_name = "web_integration_jwt";
       //const web_origins = ["https://localhost:3000", "http://localhost:3000"];
@@ -99,6 +105,8 @@ const jwtidp = {
 
       //remove \r from public key, for the request
       const publicKeyForIdp = keyPair.publicKey.replace(/\r/g, "\n");
+
+      console.log("publicKeyForIdp", publicKeyForIdp);
 
       const tenantId = await model.getTenantId(tenant_domain, access_token);
 
